@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>Brain Master AI Quiz</title>
+<style>
+:root{--bg:#0b1020;--panel:#151d34;--panel2:#1c2946;--text:#f7f8ff;--muted:#aab5d0;--cyan:#54e4ff;--purple:#a78bfa;--green:#4ade80;--red:#fb7185}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#25346a 0,transparent 32%),radial-gradient(circle at 90% 90%,#3b1f64 0,transparent 30%),var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);display:flex;align-items:center;justify-content:center;padding:18px}
+.app{width:min(760px,100%)}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px}.brand{font-weight:900;font-size:clamp(22px,5vw,32px);letter-spacing:-1px}.brand span{color:var(--cyan)}.tag{font-size:12px;color:#d8ccff;background:#30245a;border:1px solid #6047a0;border-radius:999px;padding:7px 11px}
+.card{background:linear-gradient(145deg,rgba(28,41,70,.97),rgba(17,25,46,.97));border:1px solid #344363;border-radius:24px;padding:clamp(18px,4vw,32px);box-shadow:0 24px 70px #0008}
+h1,h2,p{margin-top:0}h1{font-size:clamp(28px,6vw,42px);line-height:1.08;margin-bottom:12px}h2{font-size:24px}.muted{color:var(--muted);line-height:1.55}.hero{text-align:center;padding:18px 4px}.brain{font-size:64px;margin-bottom:8px;filter:drop-shadow(0 8px 18px #54e4ff55)}.features{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:20px 0}.pill{background:#202d4b;color:#dce7ff;border:1px solid #3b4d70;padding:8px 12px;border-radius:999px;font-size:13px}
+label{display:block;font-weight:700;margin:18px 0 8px}select{width:100%;background:#0f1830;color:white;border:1px solid #435477;padding:13px;border-radius:12px;font-size:16px}
+button{border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:13px;padding:13px 18px;transition:.18s}button:active{transform:scale(.98)}button:focus-visible,select:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}.primary{width:100%;margin-top:22px;background:linear-gradient(90deg,#42d9f5,#9b8cff);color:#10152a;font-size:17px}.secondary{background:#293858;color:white;border:1px solid #465a82}.small{padding:9px 12px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}.stat{background:#101a31;border:1px solid #2c3c5e;border-radius:14px;padding:11px;text-align:center}.stat b{display:block;font-size:21px;color:var(--cyan)}.stat span{font-size:12px;color:var(--muted)}
+.progress{height:8px;background:#0b1428;border-radius:20px;overflow:hidden;margin:12px 0 20px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .3s}
+.meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:13px}.question{font-size:clamp(20px,4vw,27px);line-height:1.35;margin:18px 0 20px}.options{display:grid;gap:11px}.option{width:100%;text-align:left;background:#202d4b;color:white;border:1px solid #3b4d70;padding:15px;display:flex;gap:12px;align-items:center}.option .letter{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#334568;color:#dceaff;flex:none}.option:hover:not(:disabled){border-color:var(--cyan);background:#26395e}.option.correct{border-color:var(--green);background:#123b37}.option.wrong{border-color:var(--red);background:#472433}.option:disabled{cursor:default}
+.feedback{margin-top:16px;padding:14px;border-radius:13px;background:#101a31;border:1px solid #344363;line-height:1.5}.feedback.good{border-color:#258b67}.feedback.bad{border-color:#a54c65}.feedback strong{display:block;margin-bottom:4px}
+.actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}.hidden{display:none!important}.result{text-align:center}.bigscore{font-size:56px;font-weight:950;color:var(--cyan);margin:10px}.resultgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:22px 0}.resultgrid .stat b{color:#fff}.note{font-size:12px;color:var(--muted);text-align:center;margin-top:15px}
+@media(max-width:480px){body{padding:10px}.card{border-radius:18px}.stats{gap:7px}.stat{padding:9px 5px}.stat b{font-size:18px}.actions{flex-direction:column-reverse}.actions button{width:100%}.top{align-items:flex-start}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top"><div class="brand">🧠 BRAIN MASTER <span>AI</span></div><div class="tag">SMART QUIZ • v1.0</div></header>
+  <section class="card" id="start">
+    <div class="hero">
+      <div class="brain">🧠</div>
+      <h1>Ready to test your brain?</h1>
+      <p class="muted">Challenge yourself with Maths, Science and General Knowledge. The smart quiz adjusts the challenge as you play!</p>
+      <div class="features"><span class="pill">⚡ Smart difficulty</span><span class="pill">🏆 High score</span><span class="pill">📘 Explanations</span></div>
+    </div>
+    <label for="category">Choose a subject</label>
+    <select id="category"><option value="all">Mixed Quiz</option><option value="math">Mathematics</option><option value="science">Science</option><option value="gk">General Knowledge</option></select>
+    <label for="count">Number of questions</label>
+    <select id="count"><option value="10">10 Questions</option><option value="5">5 Questions</option><option value="15">15 Questions</option></select>
+    <button class="primary" id="startBtn">START QUIZ →</button>
+    <p class="note">Your best score is saved on this device.</p>
+  </section>
+
+  <section class="card hidden" id="game">
+    <div class="stats">
+      <div class="stat"><b id="score">0</b><span>SCORE</span></div>
+      <div class="stat"><b id="qnum">1/10</b><span>QUESTION</span></div>
+      <div class="stat"><b id="best">0</b><span>HIGH SCORE</span></div>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="meta"><span id="subject">MIXED QUIZ</span><span id="level">LEVEL 1 • WARM-UP</span></div>
+    <h2 class="question" id="question">Question goes here</h2>
+    <div class="options" id="options"></div>
+    <div class="feedback hidden" id="feedback" aria-live="polite"></div>
+    <div class="actions"><button class="secondary small" id="quitBtn">← Quit</button><button class="primary hidden" style="width:auto;margin:0" id="nextBtn">Next question →</button></div>
+  </section>
+
+  <section class="card hidden result" id="result">
+    <div class="brain">🏆</div><h1 id="resultTitle">Quiz completed!</h1>
+    <p class="muted">Your final score</p><div class="bigscore" id="finalScore">0</div>
+    <div class="resultgrid">
+      <div class="stat"><b id="correctCount">0</b><span>CORRECT</span></div>
+      <div class="stat"><b id="accuracy">0%</b><span>ACCURACY</span></div>
+      <div class="stat"><b id="bestFinal">0</b><span>HIGH SCORE</span></div>
+      <div class="stat"><b id="rank">Rookie</b><span>YOUR RANK</span></div>
+    </div>
+    <p class="muted" id="resultMessage"></p>
+    <button class="primary" id="againBtn">PLAY AGAIN ↻</button>
+  </section>
+  <p class="note">Made with AI assistance • Runs offline in your browser</p>
+</main>
+<script>
+const bank = [
+ {c:"math",q:"What is 15 × 6?",o:["80","90","96","105"],a:1,e:"15 × 6 = 90."},
+ {c:"math",q:"What is the value of 7²?",o:["14","42","49","56"],a:2,e:"7² means 7 × 7, which equals 49."},
+ {c:"math",q:"A triangle has angles 60° and 70°. What is its third angle?",o:["40°","50°","60°","70°"],a:1,e:"Angles of a triangle add up to 180°. So 180° − 130° = 50°."},
+ {c:"math",q:"What is 3/4 written as a percentage?",o:["25%","50%","75%","80%"],a:2,e:"3 ÷ 4 × 100 = 75%."},
+ {c:"math",q:"If x + 8 = 15, what is x?",o:["5","6","7","8"],a:2,e:"Subtract 8 from both sides: x = 15 − 8 = 7."},
+ {c:"math",q:"What is the perimeter of a square with side 5 cm?",o:["10 cm","15 cm","20 cm","25 cm"],a:2,e:"Perimeter of a square = 4 × side = 4 × 5 = 20 cm."},
+ {c:"science",q:"Which part of a plant mainly absorbs water from soil?",o:["Leaves","Roots","Flowers","Fruits"],a:1,e:"Roots absorb water and minerals from the soil."},
+ {c:"science",q:"What is the SI unit of electric current?",o:["Volt","Ohm","Ampere","Watt"],a:2,e:"Electric current is measured in ampere (A)."},
+ {c:"science",q:"Which gas do plants take in for photosynthesis?",o:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],a:2,e:"Plants use carbon dioxide and water to make food during photosynthesis."},
+ {c:"science",q:"Which organ pumps blood throughout the human body?",o:["Lungs","Brain","Heart","Kidneys"],a:2,e:"The heart pumps blood through the circulatory system."},
+ {c:"science",q:"What is the chemical formula of water?",o:["CO₂","H₂O","O₂","NaCl"],a:1,e:"A water molecule contains two hydrogen atoms and one oxygen atom: H₂O."},
+ {c:"science",q:"Which mirror is commonly used as a rear-view mirror in vehicles?",o:["Plane","Concave","Convex","None"],a:2,e:"A convex mirror gives a wider field of view."},
+ {c:"gk",q:"What is the capital of Japan?",o:["Seoul","Tokyo","Beijing","Bangkok"],a:1,e:"Tokyo is the capital of Japan."},
+ {c:"gk",q:"Which is the largest planet in our Solar System?",o:["Earth","Saturn","Jupiter","Neptune"],a:2,e:"Jupiter is the largest planet in our Solar System."},
+ {c:"gk",q:"How many colours are traditionally listed in a rainbow?",o:["5","6","7","8"],a:2,e:"A rainbow is traditionally described as having seven colours."},
+ {c:"gk",q:"Which is the fastest land animal?",o:["Lion","Horse","Cheetah","Leopard"],a:2,e:"The cheetah is the fastest land animal."},
+ {c:"gk",q:"Which ocean is the largest?",o:["Atlantic","Indian","Arctic","Pacific"],a:3,e:"The Pacific Ocean is the largest ocean on Earth."},
+ {c:"gk",q:"How many days are there in a leap year?",o:["364","365","366","367"],a:2,e:"A leap year has 366 days."}
+];
+const $=id=>document.getElementById(id);
+let questions=[],index=0,score=0,correct=0,locked=false,streak=0;
+let high=Number(localStorage.getItem("brainMasterHigh")||0);
+$("best").textContent=high;
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+function start(){
+ const cat=$("category").value, total=Number($("count").value);
+ let pool=bank.filter(x=>cat==="all"||x.c===cat);
+ questions=shuffle(pool).slice(0,Math.min(total,pool.length));
+ index=0;score=0;correct=0;streak=0;
+ $("start").classList.add("hidden");$("result").classList.add("hidden");$("game").classList.remove("hidden");
+ showQuestion();
+}
+function showQuestion(){
+ locked=false;const q=questions[index];
+ $("score").textContent=score;$("qnum").textContent=(index+1)+"/"+questions.length;
+ $("best").textContent=high;$("bar").style.width=(index/questions.length*100)+"%";
+ $("subject").textContent=q.c.toUpperCase();
+ const difficulty= index<3?"WARM-UP":index<7?"CHALLENGE":"BRAIN BOSS";
+ $("level").textContent="LEVEL "+(index<3?1:index<7?2:3)+" • "+difficulty;
+ $("question").textContent=q.q;$("feedback").className="feedback hidden";$("nextBtn").classList.add("hidden");
+ const letters=["A","B","C","D"];$("options").innerHTML="";
+ q.o.forEach((option,i)=>{
+  const b=document.createElement("button");b.className="option";
+  b.innerHTML='<span class="letter">'+letters[i]+'</span><span>'+option+'</span>';
+  b.addEventListener("click",()=>answer(i));$("options").appendChild(b);
+ });
+}
+function answer(choice){
+ if(locked)return;locked=true;const q=questions[index],buttons=[...$("options").children],right=choice===q.a;
+ buttons.forEach((b,i)=>{b.disabled=true;if(i===q.a)b.classList.add("correct");if(i===choice&&!right)b.classList.add("wrong")});
+ if(right){correct++;streak++;score+=10+(streak>=3?5:0)}else{streak=0}
+ $("score").textContent=score;
+ $("feedback").className="feedback "+(right?"good":"bad");
+ $("feedback").innerHTML="<strong>"+(right?"✨ Brilliant!":"💡 Good try! The correct answer is "+q.o[q.a]+".")+"</strong>"+q.e+(right&&streak>=3?" 🔥 "+streak+" answer streak!":"");
+ $("nextBtn").classList.remove("hidden");$("nextBtn").textContent=index===questions.length-1?"See results →":"Next question →";
+}
+function finish(){
+ $("game").classList.add("hidden");$("result").classList.remove("hidden");
+ const total=questions.length,accuracy=Math.round(correct/total*100);
+ if(score>high){high=score;localStorage.setItem("brainMasterHigh",high)}
+ $("finalScore").textContent=score;$("correctCount").textContent=correct+"/"+total;
+ $("accuracy").textContent=accuracy+"%";$("bestFinal").textContent=high;
+ let rank=accuracy>=90?"Genius":accuracy>=70?"Brain Pro":accuracy>=50?"Rising Star":"Rookie";
+ $("rank").textContent=rank;$("resultTitle").textContent=accuracy>=70?"Amazing work!":"Quiz completed!";
+ $("resultMessage").textContent=accuracy>=90?"Outstanding! Your brain is on fire.":accuracy>=70?"Great effort! Keep practising to reach the Genius rank.":"Every quiz makes you smarter. Review the explanations and try again!";
+}
+$("startBtn").onclick=start;
+$("nextBtn").onclick=()=>{index++;if(index<questions.length)showQuestion();else finish()};
+$("againBtn").onclick=()=>{$("result").classList.add("hidden");$("start").classList.remove("hidden");$("best").textContent=high};
+$("quitBtn").onclick=()=>{if(confirm("Quit this quiz and return to the start screen?")){$("game").classList.add("hidden");$("start").classList.remove("hidden")}};
+</script>
+</body>
+</html>
